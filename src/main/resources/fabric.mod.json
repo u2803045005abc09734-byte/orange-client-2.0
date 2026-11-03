@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "orange",
+  "version": "${version}",
+  "name": "Orange Client",
+  "description": "A clean, modular Fabric client with an Aurora-inspired ClickGUI.",
+  "authors": ["Orange Client"],
+  "icon": "assets/orange/icon.png",
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.orange.client.OrangeClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": ">=0.141.6"
+  }
+}
