@@ -1,0 +1,59 @@
+
+name: Build Orange Client
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Compile Fabric Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: Locate Project
+        id: project
+        shell: bash
+        run: |
+          if [ -f "build.gradle" ]; then
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          elif [ -f "orange-client-new/build.gradle" ]; then
+            echo "dir=orange-client-new" >> "$GITHUB_OUTPUT"
+          else
+            echo "ERROR: build.gradle not found!"
+            exit 1
+          fi
+
+      - name: Build Orange Client
+        run: gradle --no-daemon --no-configuration-cache -p "${{ steps.project.outputs.dir }}" clean build
+
+      - name: Verify JAR
+        run: |
+          test -f "${{ steps.project.outputs.dir }}/build/libs/orange-client-1.0.0.jar"
+
+      - name: Upload Orange Client JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Orange-Client-1.0.0
+          path: ${{ steps.project.outputs.dir }}/build/libs/orange-client-1.0.0.jar
+          if-no-files-found: error
+          retention-days: 30
